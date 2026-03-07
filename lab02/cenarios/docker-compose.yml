@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  router_a:
+    build: .
+    container_name: router_A
+    env_file: .env
+    environment:
+      - ROUTER_PORT=${PORT_A}
+      - ROUTER_NETWORK=${NETWORK_A}
+      - CONFIG_FILE=config_A.csv
+      - UPDATE_INTERVAL=${UPDATE_INTERVAL}
+    command: sh -c "python roteador.py -p $$ROUTER_PORT -f /app/config/$$CONFIG_FILE --network $$ROUTER_NETWORK --interval $$UPDATE_INTERVAL"
+    networks:
+      routing_net:
+        ipv4_address: ${ROUTER_IP_A}
+    volumes:
+      - ./exemplo:/app/config
+
+  router_b:
+    build: .
+    container_name: router_B
+    env_file: .env
+    environment:
+      - ROUTER_PORT=${PORT_B}
+      - ROUTER_NETWORK=${NETWORK_B}
+      - CONFIG_FILE=config_B.csv
+      - UPDATE_INTERVAL=${UPDATE_INTERVAL}
+    command: sh -c "python roteador.py -p $$ROUTER_PORT -f /app/config/$$CONFIG_FILE --network $$ROUTER_NETWORK --interval $$UPDATE_INTERVAL"
+    networks:
+      routing_net:
+        ipv4_address: ${ROUTER_IP_B}
+    volumes:
+      - ./exemplo:/app/config
+
+  router_c:
+    build: .
+    container_name: router_C
+    env_file: .env
+    environment:
+      - ROUTER_PORT=${PORT_C}
+      - ROUTER_NETWORK=${NETWORK_C}
+      - CONFIG_FILE=config_C.csv
+      - UPDATE_INTERVAL=${UPDATE_INTERVAL}
+    command: sh -c "python roteador.py -p $$ROUTER_PORT -f /app/config/$$CONFIG_FILE --network $$ROUTER_NETWORK --interval $$UPDATE_INTERVAL"
+    networks:
+      routing_net:
+        ipv4_address: ${ROUTER_IP_C}
+    volumes:
+      - ./exemplo:/app/config
+
+networks:
+  routing_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
